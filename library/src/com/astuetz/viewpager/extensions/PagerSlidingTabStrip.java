@@ -32,12 +32,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -250,6 +252,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		ImageButton tab = new ImageButton(getContext());
 		tab.setFocusable(true);
 		tab.setImageResource(resId);
+        tab.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        tab.setSelected(position == currentPosition);
 
 		tab.setOnClickListener(new OnClickListener() {
 			@Override
@@ -271,9 +275,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			v.setLayoutParams(defaultTabLayoutParams);
 			v.setBackgroundResource(tabBackgroundResId);
 			if (shouldExpand) {
-				v.setPadding(0, 0, 0, 0);
+				v.setPadding(0, tabPadding, 0, tabPadding);
 			} else {
-				v.setPadding(tabPadding, 0, tabPadding, 0);
+				v.setPadding(tabPadding * 2, tabPadding, tabPadding * 2, tabPadding);
 			}
 
 			if (v instanceof TextView) {
@@ -407,6 +411,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 		@Override
 		public void onPageScrollStateChanged(int state) {
+            for (int k = 0; k < tabsContainer.getChildCount(); k++) {
+                tabsContainer.getChildAt(k).setSelected(k == pager.getCurrentItem());
+            }
+
 			if (state == ViewPager.SCROLL_STATE_IDLE) {
 				scrollToChild(pager.getCurrentItem(), 0);
 			}
